@@ -5678,3 +5678,38 @@ func (s *apiRPCServer) GetCloudLimits(args *Z_GetCloudLimitsArgs, returns *Z_Get
 	}
 	return nil
 }
+
+
+func init() {
+	hookNameToId["UserHasBeenDeactivated"] = UserHasBeenDeactivatedID
+}
+
+type Z_UserHasBeenDeactivatedArgs struct {
+	A string
+	B bool
+}
+
+type Z_UserHasBeenDeactivatedeturns struct {
+}
+
+func (g *hooksRPCClient) UserHasBeenDeactivated(userID string, permanentDelete bool) {
+	_args := &Z_UserHasBeenDeactivatedArgs{userID, permanentDelete}
+	_returns := &Z_UserHasBeenDeactivatedeturns{}
+	if g.implemented[UserHasBeenDeactivatedID] {
+		if err := g.client.Call("Plugin.UserHasBeenDeactivated", _args, _returns); err != nil {
+			g.log.Error("RPC call UserHasBeenDeactivated to plugin failed.", mlog.Err(err))
+		}
+	}
+
+}
+
+func (s *hooksRPCServer) UserHasBeenDeactivated(args *Z_UserHasBeenDeactivatedArgs, returns *Z_UserHasBeenDeactivatedeturns) error {
+	if hook, ok := s.impl.(interface {
+		UserHasBeenDeactivated(userID string, permanentDelete bool)
+	}); ok {
+		hook.UserHasBeenDeactivated(args.A, args.B)
+	} else {
+		return encodableError(fmt.Errorf("Hook UserHasBeenDeactivated called but not implemented."))
+	}
+	return nil
+}

@@ -43,6 +43,7 @@ const (
 	OnInstallID                     = 25
 	OnSendDailyTelemetryID          = 26
 	OnCloudLimitsUpdatedID          = 27
+	UserHasBeenDeactivatedID        = 28
 	TotalHooksID                    = iota
 )
 
@@ -270,4 +271,10 @@ type Hooks interface {
 	//
 	// Minimum server version: 7.0
 	OnCloudLimitsUpdated(limits *model.ProductLimits)
+
+	// UserHasBeenDeactivated is invoked after a user was disconnect / logout
+	// from mattermost and clear plugin user data.
+	//
+	// Minimum server version: 6.7
+	UserHasBeenDeactivated(userID string, permanentDelete bool)
 }
